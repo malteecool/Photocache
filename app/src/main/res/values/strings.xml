@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">photocache</string>
+    <string name="topbartitle1">Available Caches</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyBVCeTtGjvl2crAStyXgt4MYknQxtlqZ2g</string>
+    <string name="Details"><u>Details</u></string>
+    <string name="img_score">Image Score: %1$d points</string>
+    <string name="img_percent">Percent match: %1$d %%</string>
+    <string name="pos_score">Position score: %1$d points</string>
+    <string name="pos_distance">Distance to location: %1$d m</string>
+    <string name="help">Help</string>
+    <string name="howtoplay"><b><u>How To Play:</u></b></string>
+    <string name="howtoplaydetails">1. Start by selecting the cache you want to find.\n\n
+        2. Locate the place where the image is taken. \n
+        A marker on the map will show you the way.\n\n
+        3. Try to mimic the image yourself. \n
+        The more accurate your photo, \nthe more points will be given.
+    </string>
+    <string name="dismiss" >[Click to dismiss]</string>
+    <string name="information"><u><b>Information:</b></u></string>
+    <string name="informationdetails">This app is created as an school project.\n\n
+        Created By: Malte Lindgren\n
+        Contact: dv18mln@cs.umu.se\n
+        Date: 25-3-2020
+    </string>
+    <string name="dbError">Could not load highscores</string>
+    <string name="fragmentCaches">Available Caches</string>
+    <string name="fragmentNoti">Notifications</string>
+    <string name="fragmentHighscore">Highscore</string>
+    <string name="settings">Settings</string>
+    <string name="back">Return to previous activity</string>
+</resources>
