@@ -6,9 +6,7 @@ import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import coil.api.load
 
 /**
@@ -44,6 +42,8 @@ class CustomListView(context: Activity, val cacheData: Array<CacheData>)
             viewHolder.imgView.load(bitmap)
         }
 
+        viewHolder.rating.rating = ((cacheData[position].userScore.toFloat()/10))
+
         return rowView
     }
 
@@ -51,6 +51,7 @@ class CustomListView(context: Activity, val cacheData: Array<CacheData>)
         val txtTitle = v.findViewById<TextView>(R.id.txtTitle)
         val txtDesc = v.findViewById<TextView>(R.id.txtDesc)
         val imgView = v.findViewById<ImageView>(R.id.imgView)
+        val rating = v.findViewById<RatingBar>(R.id.ratingBar)
 
     }
 

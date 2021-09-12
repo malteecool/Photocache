@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "325834001642-3n96rohokphsbp0jc6533nfvli7tvrf1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "se.umu.cs.dv18mln.photocache",
+            "certificate_hash": "508c40709d83c208432ed0dd72c2293d70cfd2b1"
+          }
+        },
+        {
+          "client_id": "325834001642-uudroof7g9tg7cvl1510qtj10rrca9sc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "se.umu.cs.dv18mln.photocache",
+            "certificate_hash": "695bcf632a68789af4acaed4daef434d63540440"
+          }
+        },
+        {
           "client_id": "325834001642-kkiaf4huu8l3dqgtiimhtfhcl92hpimn.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -28,7 +44,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "325834001642-kkiaf4huu8l3dqgtiimhtfhcl92hpimn.apps.googleusercontent.com",
+              "client_id": "325834001642-ar8fvepki7lifgjkjre1r4pbu8qeraqf.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

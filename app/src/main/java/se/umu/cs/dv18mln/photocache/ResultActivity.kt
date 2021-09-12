@@ -4,7 +4,14 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
@@ -33,6 +40,10 @@ class ResultActivity: AppCompatActivity() {
             finish()
         }
         setText()
+
+        if(args.getString("userId") != null){
+            updateScore()
+        }
     }
 
     /**
@@ -53,6 +64,30 @@ class ResultActivity: AppCompatActivity() {
 
         val txtPosDistance:TextView = findViewById(R.id.txtPosPercent)
         txtPosDistance.text = getString(R.string.pos_distance, (args.get("distance") as Double).roundToInt())
+    }
+
+
+    private fun updateScore(){
+
+        val userId = args.getString("userId")
+        val cacheId = args.getString("cacheId")
+        val score = args.getDouble("score")
+
+        val databaseReference: DatabaseReference = Firebase.database.reference
+        val userQuery = databaseReference.child("users").child(userId!!)
+        userQuery.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // The value check needs to be done here since we need to retrieve the old value from
+                // the db.
+                if((dataSnapshot.child(cacheId!!).value as Long).toInt() < score.toInt()){
+                    userQuery.child(cacheId).setValue(score.toInt())
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@ResultActivity,"Could not fetch database", Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     /**

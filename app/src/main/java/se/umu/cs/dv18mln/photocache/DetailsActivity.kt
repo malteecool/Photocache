@@ -2,7 +2,6 @@ package se.umu.cs.dv18mln.photocache
 
 import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -19,7 +18,7 @@ import com.google.android.material.tabs.TabLayout
 import se.umu.cs.dv18mln.photocache.Fragments.SliderDetailsFragment
 import se.umu.cs.dv18mln.photocache.Fragments.SliderImgFragment
 import se.umu.cs.dv18mln.photocache.Fragments.SliderMapFragment
-import java.io.ByteArrayOutputStream
+import se.umu.cs.dv18mln.photocache.ImageHandler.CalcActivity
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -43,17 +42,18 @@ import java.util.*
  * @author dv18mln
  */
 class DetailsActivity : AppCompatActivity(){
-    val REQUEST_IMAGE_CAPTURE = 1
-    val REQUEST_TAKE_PHOTO = 1
+    private val REQUEST_IMAGE_CAPTURE = 1
+    private val REQUEST_TAKE_PHOTO = 1
     var NUMBER_FRAGMENTS = 3
 
     private lateinit var mPager: CustomViewPager
     private lateinit var pagerAdapter: ScreenSlidePagerAdapter
     lateinit var cacheData: CacheData
     lateinit var tabLayout: TabLayout
-    lateinit var camera_button: ImageButton
+    lateinit var cameraButton: ImageButton
     lateinit var currentPhotoPath: String
     lateinit var fragment: SliderMapFragment
+    private val args = Bundle()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +65,11 @@ class DetailsActivity : AppCompatActivity(){
         }
         setContentView(R.layout.details_layout)
 
-        cacheData = intent.getSerializableExtra("cacheData") as CacheData
+        cacheData = intent.getParcelableExtra("cacheData") as CacheData
+
+        args.putString("userId", intent.getStringExtra("userId"))
+        args.putString("cacheId", cacheData.id)
+        args.putByteArray("imgBitmap", cacheData.imgArray)
 
         setSupportActionBar(findViewById(R.id.details_toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -75,15 +79,19 @@ class DetailsActivity : AppCompatActivity(){
         initNewPager(0)
 
         setCameraListener()
+
     }
 
     /**
      * Sets the listener to the camera button.
      */
     private fun setCameraListener(){
-        camera_button = findViewById(R.id.camera_button)
-        camera_button.setOnClickListener {
+        cameraButton = findViewById(R.id.camera_button)
+        cameraButton.setOnClickListener {
             if(fragment.getUserLocation() != null){
+                args.putParcelable("userLocation", fragment.getUserLocation())
+                args.putParcelable("markerLocation", fragment.getMarkerLocation())
+
                 photoIntent()
             }
             else{
@@ -129,7 +137,7 @@ class DetailsActivity : AppCompatActivity(){
      * Overrides the configurationChanged method.
      *
      * If the phone is put in landscape mode, the tabLayout displays
-     * three tabs, an extra with the detailsfragment.
+     * three tabs, an extra with the detailsFragment.
      * The ViewPager is re-initialized after this.
      */
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -152,7 +160,6 @@ class DetailsActivity : AppCompatActivity(){
         return super.onOptionsItemSelected(item)
     }
 
-
     /**
      * Method to be run after the camera-activity is done.
      * If the image was captured successfully the directory of
@@ -164,14 +171,10 @@ class DetailsActivity : AppCompatActivity(){
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        //Result of a successful imagecapture is -1, if the user cancels the result is 0.
+        // Result of a successful imagecapture is -1, if the user cancels the result is 0.
         if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == -1){
             val intent = Intent(this, CalcActivity::class.java)
-            intent.putExtra("dir", currentPhotoPath)
-            val stream = ByteArrayOutputStream()
-            intent.putExtra("imgBitmap", stream.toByteArray())
-            intent.putExtra("userLocation", fragment.getUserLocation())
-            intent.putExtra("markerLocation", fragment.getMarkerLocation())
+            intent.putExtra("bundle", args)
             startActivity(intent)
         }
     }
@@ -211,7 +214,7 @@ class DetailsActivity : AppCompatActivity(){
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.GERMANY).format(Date())
         val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir).apply {
-            currentPhotoPath = absolutePath
+            args.putString("dir", absolutePath)
         }
     }
 

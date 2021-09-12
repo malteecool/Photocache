@@ -31,7 +31,7 @@ class SliderImgFragment : Fragment() {
     companion object{
         fun newInstance(cacheData: CacheData):Fragment{
             val args = Bundle()
-            args.putSerializable("cacheData", cacheData)
+            args.putParcelable("cacheData", cacheData)
             val s = SliderImgFragment()
             s.arguments = args
             return s

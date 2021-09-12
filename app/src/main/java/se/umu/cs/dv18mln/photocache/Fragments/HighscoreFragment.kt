@@ -42,6 +42,7 @@ class HighscoreFragment:Fragment(){
         super.onViewCreated(view, savedInstanceState)
         view.findViewById<TextView>(R.id.lblCouldNotLoad).visibility = View.GONE
 
+        // To be changed.
         val querySize = 20
 
         handleData(view, querySize)

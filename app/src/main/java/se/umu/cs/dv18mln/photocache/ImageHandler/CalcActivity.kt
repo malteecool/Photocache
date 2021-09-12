@@ -1,4 +1,4 @@
-package se.umu.cs.dv18mln.photocache
+package se.umu.cs.dv18mln.photocache.ImageHandler
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.model.LatLng
 import java.lang.Math.abs
 
+import se.umu.cs.dv18mln.photocache.R
+import se.umu.cs.dv18mln.photocache.ResultActivity
+
 /**
  * Activity to handle the comparision between the two images and the
  * users positions of the user and the cache.
@@ -24,8 +27,9 @@ class CalcActivity:AppCompatActivity() {
 
     lateinit var progressBar: ProgressBar
     lateinit var t:Thread
-    val handler:Handler = Handler()
-    val args = Bundle()
+    private val handler:Handler = Handler()
+    private val args_res = Bundle()
+    lateinit var args: Bundle
 
     /**
      * Retrieves the stored file as a bit map.
@@ -38,18 +42,21 @@ class CalcActivity:AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.calc_layout)
 
-        val byteArray = intent.getByteArrayExtra("imgBitmap")
+        args = intent.getBundleExtra("bundle")
 
-        val bitmap1: Bitmap = BitmapFactory.decodeFile(intent.getStringExtra("dir"))
-        val bitmap2: Bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        val byteArray = args.getByteArray("imgBitmap")
+
+        args_res.putString("userId", args.getString("userId"))
+        args_res.putString("cacheId", args.getString("cacheId"))
+
+        val bitmap1: Bitmap = BitmapFactory.decodeFile(args.getString("dir"))
+        val bitmap2: Bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray!!.size)
 
         progressBar = findViewById(R.id.progCalc)
-
         t = Thread(Runnable {
             var score = matchImage(bitmap1, bitmap2)
             score += matchPosition()
-            args.putDouble("score", score)
-
+            args_res.putDouble("score", score)
             launchResult()
         })
         t.start()
@@ -106,8 +113,8 @@ class CalcActivity:AppCompatActivity() {
             })
         }
         val maxDiff = 3L * 255 * width * height
-        args.putDouble("imagepercent", (100.0 * diff/maxDiff))
-        args.putDouble("imageScore", (MAX_SCORE * 100 * diff/maxDiff))
+        args_res.putDouble("imagepercent", (100.0 * diff/maxDiff))
+        args_res.putDouble("imageScore", (MAX_SCORE * 100 * diff/maxDiff))
         return (MAX_SCORE * 100 * diff/maxDiff)
     }
 
@@ -143,19 +150,20 @@ class CalcActivity:AppCompatActivity() {
      * @return The score of the distance to the location.
      */
     private fun matchPosition():Double{
-        val userPos = intent.getParcelableExtra<LatLng>("userLocation")
-        val markerPos = intent.getParcelableExtra<LatLng>("markerLocation")
+        val userPos = args.getParcelable<LatLng>("userLocation")
+        val markerPos = args.getParcelable<LatLng>("markerLocation")
 
         val results = FloatArray(3)
 
-        Location.distanceBetween(userPos.latitude,
-            userPos.longitude, markerPos.latitude,
+        Location.distanceBetween(userPos!!.latitude,
+            userPos.longitude, markerPos!!.latitude,
             markerPos.longitude, results)
 
         val distance = results[0].toDouble()
         val score = 1000.0-distance
-        args.putDouble("distance", distance)
-        args.putDouble("posScore", score)
+        args_res.putDouble("distance", distance)
+        args_res.putDouble("posScore", score)
+
         return score
     }
 
@@ -169,7 +177,7 @@ class CalcActivity:AppCompatActivity() {
      */
     private fun launchResult(){
         val intent = Intent(this, ResultActivity::class.java)
-        intent.putExtra("bundle", args)
+        intent.putExtra("bundle", args_res)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(intent)
         this.finish()

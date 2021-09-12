@@ -50,7 +50,7 @@ class SliderMapFragment : Fragment(), OnMapReadyCallback {
     companion object {
         fun newInstance(cacheData: CacheData): SliderMapFragment {
             val args = Bundle()
-            args.putSerializable("cacheData", cacheData)
+            args.putParcelable("cacheData", cacheData)
             val s = SliderMapFragment()
             s.arguments = args
             return s
@@ -236,7 +236,7 @@ class SliderMapFragment : Fragment(), OnMapReadyCallback {
 
         cacheData = arguments?.get("cacheData") as CacheData
         mMap = googleMap
-        val marker = LatLng(cacheData.x_pos, cacheData.y_pos)
+        val marker = LatLng(cacheData.xPos, cacheData.yPos)
         imageMarker = mMap.addMarker(MarkerOptions().position(marker).title("Location of image"))
         val cpos = CameraPosition.Builder().target(marker).zoom(14.toFloat()).build()
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cpos))

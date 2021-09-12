@@ -25,7 +25,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logo_placeholder" />
+        app:srcCompat="@mipmap/photocache_icon_round_w_text"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

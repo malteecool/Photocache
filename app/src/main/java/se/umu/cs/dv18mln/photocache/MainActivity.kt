@@ -3,7 +3,6 @@ package se.umu.cs.dv18mln.photocache
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -61,7 +60,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         mAuth = FirebaseAuth.getInstance()
         val user: FirebaseUser? = mAuth.currentUser
         if (user != null) {
@@ -116,16 +114,22 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItem)
     }
 
-    private fun initFragment(cacheData: ArrayList<CacheData>){
-
-        findViewById<ProgressBar>(R.id.mainProgressbar).visibility = View.GONE
-
-        fragment = ListFragment(cacheData.toTypedArray())//.newInstance(cacheData.toTypedArray())
+    private fun initFragment(cacheData: ArrayList<String>, userId: String){
+        fragment = ListFragment.newInstance(cacheData, userId)
         supportFragmentManager.beginTransaction().replace(
             R.id.fragment_container,
             fragment,
             fragment.javaClass.simpleName
         ).commit()
+    }
+
+    fun hideLoadingBar(hide: Boolean?):Boolean{
+        val progbar = findViewById<ProgressBar>(R.id.mainProgressbar)
+
+        if(hide != null && hide == true)
+            progbar.visibility = View.GONE
+
+        return progbar.visibility == View.GONE
     }
 
     private fun signInAnonymously(){
@@ -154,37 +158,13 @@ class MainActivity : AppCompatActivity() {
         val query = databaseReference.child("cache").limitToLast(5)
         query.addValueEventListener(object: ValueEventListener{
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val querySize = dataSnapshot.childrenCount.toInt()
-                var i = 0
-                val cacheData = ArrayList<CacheData>()
-                for (ds in dataSnapshot.children){
+                val cacheDataString = ArrayList<String>()
+                for ((i, ds) in dataSnapshot.children.withIndex()){
+                    // Assigning values from database.
+                    val cacheId = ds.key
+                    cacheDataString.add(cacheId!!)
+                    if (i == dataSnapshot.childrenCount.toInt()-1) initFragment(cacheDataString, user!!.uid)
 
-                    val imageID = ds.child("imageID").value as String
-                    val title = ds.child("title").value as String
-                    val desc = ds.child("desc").value as String
-                    val coords_as_string = ds.child("coords").value as String
-                    val coords = coords_as_string.split(',')
-                    val id = ds.child("id").value.toString()
-
-                    val score = getUserScore(user, id)
-
-                    val httpRef = storage.getReferenceFromUrl(
-                            "gs://photocache-fc3d8.appspot.com/CacheImages/${imageID}")
-
-                    val maxDownloadSizeBytes: Long = 8 * 1024 * 1024 // 1 MB
-                    httpRef.getBytes(maxDownloadSizeBytes).addOnSuccessListener {
-
-                        cacheData.add(CacheData(title, desc, imageID, it, coords[0].toDouble(),coords[1].toDouble()))
-
-                        i += 1
-
-                        if (i == querySize) initFragment(cacheData)
-
-                    }.addOnFailureListener{
-
-                        it.printStackTrace()
-
-                    }
                 }
             }
             override fun onCancelled(dataBaseError: DatabaseError) {
@@ -193,23 +173,26 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun getUserScore(user: FirebaseUser?, cache_id: String):Int{
+    /**
+     * Retrieves score of the user
+     */
+
+    private fun getUserScore(user: FirebaseUser?, cache:CacheData){
 
         val databaseReference: DatabaseReference = Firebase.database.reference
-        var score = 0
         if(user != null){
             val userQuery = databaseReference.child("users").child(user.uid)
             userQuery.addValueEventListener(object: ValueEventListener{
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     if(!dataSnapshot.exists()){
-                        userQuery.child(cache_id).setValue(0)
+                        cache.id?.let { userQuery.child(it).setValue(0) }
+                        cache.userScore = 0
                     }
                     else{
-                        val temp = dataSnapshot.child(cache_id).value
-                        if(temp is Long){
-                            score = temp.toInt()
-                        }
+                        val temp = cache.id?.let { dataSnapshot.child(it).value }
+                        cache.userScore = (temp as Long).toInt()
                     }
+
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -217,7 +200,10 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         }
-        return score
+        else{
+            Toast.makeText(this@MainActivity,"User is null.", Toast.LENGTH_LONG).show()
+        }
+
     }
 
     /**
