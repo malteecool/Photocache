@@ -36,7 +36,7 @@ import se.umu.cs.dv18mln.photocache.Fragments.NotificationFragment
  * The main activity of the application.
  *
  * The available caches are hardcoded but could eventually be store remotely in
- * some database with cachedata tuples.
+ * some database with cache data tuples.
  *
  * The activity implements a bottomNavigationbar to make the user
  * able to switch between fragments. The user can switch between
@@ -208,7 +208,7 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Overrides the backbutton to ask the user if the backpress was
-     * intentional and actually wants to leave the application
+     * intentional and actually wants to leave the application.
      */
     override fun onBackPressed() {
         val builder = AlertDialog.Builder(this)

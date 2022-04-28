@@ -70,8 +70,8 @@ class SliderMapFragment : Fragment(), OnMapReadyCallback {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
-                for (location in locationResult.locations){
-                    if(::userMarker.isInitialized){
+                for (location in locationResult.locations) {
+                    if (::userMarker.isInitialized) {
                         userMarker.remove()
                     }
 
@@ -106,7 +106,7 @@ class SliderMapFragment : Fragment(), OnMapReadyCallback {
      */
     override fun onResume() {
         super.onResume()
-        if(requestingLocationUpdates) startLocationUpdates()
+        if (requestingLocationUpdates) startLocationUpdates()
     }
 
     /**
@@ -130,9 +130,11 @@ class SliderMapFragment : Fragment(), OnMapReadyCallback {
             // for ActivityCompat#requestPermissions for more details.
             return
         }
-        fusedLocation.requestLocationUpdates(locationRequest,
+        fusedLocation.requestLocationUpdates(
+            locationRequest,
             locationCallback,
-            Looper.getMainLooper())
+            Looper.getMainLooper()
+        )
     }
 
     /**
@@ -168,8 +170,10 @@ class SliderMapFragment : Fragment(), OnMapReadyCallback {
             // permission was granted, proceed to the normal flow.
             return
         } else {
-            Toast.makeText(this.context, "Need permission to display the map",
-                Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this.context, "Need permission to display the map",
+                Toast.LENGTH_LONG
+            ).show()
             requireActivity().finish()
         }
     }
@@ -180,18 +184,22 @@ class SliderMapFragment : Fragment(), OnMapReadyCallback {
      * @return True if the user have accepted all permissions, else
      * false and the requestPermissionResult will be called.
      */
-    private fun isPermissionGiven():Boolean{
-        return (ActivityCompat.checkSelfPermission(requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager
-            .PERMISSION_GRANTED) && (ActivityCompat.checkSelfPermission(requireContext(),
-            Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+    private fun isPermissionGiven(): Boolean {
+        return (ActivityCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager
+            .PERMISSION_GRANTED) && (ActivityCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED)
     }
 
     /**
      * Return a request of the users location on a specifed interval.
      * The interval is set to 10 000 ms (10 sec).
      */
-    private fun getLocationRequest():LocationRequest{
+    private fun getLocationRequest(): LocationRequest {
         return LocationRequest().apply {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             interval = 10000
@@ -204,17 +212,23 @@ class SliderMapFragment : Fragment(), OnMapReadyCallback {
      * icon. The marker is removed and set every time the location is updated
      * through the locationRequest.
      */
-    private fun setMarker(location: Location){
-        val icon = BitmapDescriptorFactory.fromBitmap(Bitmap
-            .createScaledBitmap(BitmapFactory.decodeResource(this.resources,
-                R.drawable.maps_user_icon
-            ), 50, 50 , false))
+    private fun setMarker(location: Location) {
+        val icon = BitmapDescriptorFactory.fromBitmap(
+            Bitmap
+                .createScaledBitmap(
+                    BitmapFactory.decodeResource(
+                        this.resources,
+                        R.drawable.maps_user_icon
+                    ), 50, 50, false
+                )
+        )
 
         userMarker = mMap.addMarker(
             MarkerOptions()
                 .position(LatLng(location.latitude, location.longitude))
                 .title("Your location")
-                .icon(icon))
+                .icon(icon)
+        )
 
     }
 
@@ -228,10 +242,14 @@ class SliderMapFragment : Fragment(), OnMapReadyCallback {
      * The camera of the map is also moved to the location of the cache.
      */
     override fun onMapReady(googleMap: GoogleMap) {
-        if(!isPermissionGiven()){
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION),
-                PackageManager.PERMISSION_GRANTED)
+        if (!isPermissionGiven()) {
+            requestPermissions(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                PackageManager.PERMISSION_GRANTED
+            )
         }
 
         cacheData = arguments?.get("cacheData") as CacheData
@@ -246,8 +264,8 @@ class SliderMapFragment : Fragment(), OnMapReadyCallback {
      * Gets the location of the users position as a LatLng.
      * @return The user location.
      */
-    fun getUserLocation():LatLng?{
-        if(!::userMarker.isInitialized){
+    fun getUserLocation(): LatLng? {
+        if (!::userMarker.isInitialized) {
             return null
         }
         return userMarker.position
@@ -256,7 +274,7 @@ class SliderMapFragment : Fragment(), OnMapReadyCallback {
     /**
      * @return The location of the cahce as LatLng.
      */
-    fun getMarkerLocation():LatLng{
+    fun getMarkerLocation(): LatLng {
         return imageMarker.position
     }
 

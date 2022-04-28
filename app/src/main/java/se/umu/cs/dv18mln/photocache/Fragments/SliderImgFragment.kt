@@ -28,8 +28,8 @@ class SliderImgFragment : Fragment() {
      * Uses companion object and new instance to not skip
      * re-set the image on every changed fragment.
      */
-    companion object{
-        fun newInstance(cacheData: CacheData):Fragment{
+    companion object {
+        fun newInstance(cacheData: CacheData): Fragment {
             val args = Bundle()
             args.putParcelable("cacheData", cacheData)
             val s = SliderImgFragment()
@@ -55,9 +55,11 @@ class SliderImgFragment : Fragment() {
         val imgView = requireView().findViewById<ImageView>(R.id.imgView)
         val cacheData = arguments?.get("cacheData") as CacheData
 
-        if(cacheData.imgArray != null){
-            val bitmap = BitmapFactory.decodeByteArray(cacheData.imgArray, 0,
-                cacheData.imgArray!!.size)
+        if (cacheData.imgArray != null) {
+            val bitmap = BitmapFactory.decodeByteArray(
+                cacheData.imgArray, 0,
+                cacheData.imgArray!!.size
+            )
             Glide.with(this).load(bitmap).into(imgView)
         }
 

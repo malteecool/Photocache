@@ -24,9 +24,9 @@ import kotlin.math.roundToInt
  *
  * values should be put in a bundle passed to the intent.
  */
-class ResultActivity: AppCompatActivity() {
+class ResultActivity : AppCompatActivity() {
 
-    lateinit var args:Bundle
+    lateinit var args: Bundle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,13 +35,13 @@ class ResultActivity: AppCompatActivity() {
 
         args = intent.getBundleExtra("bundle")
 
-        val btnDone:Button  = findViewById(R.id.buttonDone)
+        val btnDone: Button = findViewById(R.id.buttonDone)
         btnDone.setOnClickListener {
             finish()
         }
         setText()
 
-        if(args.getString("userId") != null){
+        if (args.getString("userId") != null) {
             updateScore()
         }
     }
@@ -49,25 +49,29 @@ class ResultActivity: AppCompatActivity() {
     /**
      * Sets the information passed in the bundle.
      */
-    private fun setText(){
-        val txtCalc:TextView = findViewById(R.id.txtScoreSet)
+    private fun setText() {
+        val txtCalc: TextView = findViewById(R.id.txtScoreSet)
         txtCalc.text = floor(args.get("score") as Double).toString()
 
-        val txtImgScore:TextView = findViewById(R.id.txtImgScore)
-        txtImgScore.text = getString(R.string.img_score, (args.get("imageScore") as Double).roundToInt())
+        val txtImgScore: TextView = findViewById(R.id.txtImgScore)
+        txtImgScore.text =
+            getString(R.string.img_score, (args.get("imageScore") as Double).roundToInt())
 
-        val txtImgpercent:TextView = findViewById(R.id.txtImgpercent)
-        txtImgpercent.text = getString(R.string.img_percent, (args.get("imagepercent") as Double).roundToInt())
+        val txtImgpercent: TextView = findViewById(R.id.txtImgpercent)
+        txtImgpercent.text =
+            getString(R.string.img_percent, (args.get("imagepercent") as Double).roundToInt())
 
-        val txtPosScore:TextView = findViewById(R.id.txtPosScore)
-        txtPosScore.text = getString(R.string.pos_score, (args.get("posScore") as Double).roundToInt())
+        val txtPosScore: TextView = findViewById(R.id.txtPosScore)
+        txtPosScore.text =
+            getString(R.string.pos_score, (args.get("posScore") as Double).roundToInt())
 
-        val txtPosDistance:TextView = findViewById(R.id.txtPosPercent)
-        txtPosDistance.text = getString(R.string.pos_distance, (args.get("distance") as Double).roundToInt())
+        val txtPosDistance: TextView = findViewById(R.id.txtPosPercent)
+        txtPosDistance.text =
+            getString(R.string.pos_distance, (args.get("distance") as Double).roundToInt())
     }
 
 
-    private fun updateScore(){
+    private fun updateScore() {
 
         val userId = args.getString("userId")
         val cacheId = args.getString("cacheId")
@@ -75,17 +79,18 @@ class ResultActivity: AppCompatActivity() {
 
         val databaseReference: DatabaseReference = Firebase.database.reference
         val userQuery = databaseReference.child("users").child(userId!!)
-        userQuery.addValueEventListener(object: ValueEventListener {
+        userQuery.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // The value check needs to be done here since we need to retrieve the old value from
                 // the db.
-                if((dataSnapshot.child(cacheId!!).value as Long).toInt() < score.toInt()){
+                if ((dataSnapshot.child(cacheId!!).value as Long).toInt() < score.toInt()) {
                     userQuery.child(cacheId).setValue(score.toInt())
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@ResultActivity,"Could not fetch database", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@ResultActivity, "Could not fetch database", Toast.LENGTH_LONG)
+                    .show()
             }
         })
     }

@@ -21,13 +21,13 @@ import se.umu.cs.dv18mln.photocache.ResultActivity
  * users positions of the user and the cache.
  * @author dv18mln
  */
-class CalcActivity:AppCompatActivity() {
+class CalcActivity : AppCompatActivity() {
 
     val MAX_SCORE = 100.0
 
     lateinit var progressBar: ProgressBar
-    lateinit var t:Thread
-    private val handler:Handler = Handler()
+    lateinit var t: Thread
+    private val handler: Handler = Handler()
     private val args_res = Bundle()
     lateinit var args: Bundle
 
@@ -80,7 +80,7 @@ class CalcActivity:AppCompatActivity() {
      * @param img2 The second image, which will be compared to the first.
      * @return The resulting score after the images is compared.
      */
-    private fun matchImage(img1: Bitmap, img2: Bitmap):Double{
+    private fun matchImage(img1: Bitmap, img2: Bitmap): Double {
         val width = img1.width
         val height = img1.height
         val width2 = img2.width
@@ -89,33 +89,33 @@ class CalcActivity:AppCompatActivity() {
         var resizedImg1: Bitmap = img1
         var resizedImg2: Bitmap = img2
 
-        if(width != width2 || height != height2){
+        if (width != width2 || height != height2) {
             //rescale image to fit the smaller of the two.
             //first image is larger
-            if(width > width2 || height > height2){
+            if (width > width2 || height > height2) {
                 resizedImg1 = Bitmap.createScaledBitmap(img1, width2, height2, true)
                 resizedImg2 = img2
             }
             //second image is larger
-            else{
+            else {
                 resizedImg1 = img1
                 resizedImg2 = Bitmap.createScaledBitmap(img2, width, height, true)
             }
         }
         progressBar.max = resizedImg1.height
         var diff = 0L
-        for(y in 0 until resizedImg1.height){
-            for(x in 0 until resizedImg2.width){
-                diff += pixelDiff(resizedImg1.getPixel(x,y), resizedImg2.getPixel(x,y))
+        for (y in 0 until resizedImg1.height) {
+            for (x in 0 until resizedImg2.width) {
+                diff += pixelDiff(resizedImg1.getPixel(x, y), resizedImg2.getPixel(x, y))
             }
             handler.post(Runnable {
                 progressBar.progress = y
             })
         }
         val maxDiff = 3L * 255 * width * height
-        args_res.putDouble("imagepercent", (100.0 * diff/maxDiff))
-        args_res.putDouble("imageScore", (MAX_SCORE * 100 * diff/maxDiff))
-        return (MAX_SCORE * 100 * diff/maxDiff)
+        args_res.putDouble("imagepercent", (100.0 * diff / maxDiff))
+        args_res.putDouble("imageScore", (MAX_SCORE * 100 * diff / maxDiff))
+        return (MAX_SCORE * 100 * diff / maxDiff)
     }
 
     /**
@@ -130,14 +130,14 @@ class CalcActivity:AppCompatActivity() {
      * @param rgb2 Color twos rbg values as int.
      * @return The modulus value of the combined sum of the colors.
      */
-    private fun pixelDiff(rgb1: Int, rgb2:Int):Int{
-        val r1 = (rgb1 shr 16)  and 0xff
-        val g1 = (rgb1 shr 8)  and 0xff
-        val b1 = (rgb1)  and 0xff
-        val r2 = (rgb2 shr 16)  and 0xff
-        val g2 = (rgb2 shr 8)  and 0xff
-        val b2 = (rgb2)  and 0xff
-        return (abs(r1-r2) + abs(g1-g2) + abs(b1 - b2))
+    private fun pixelDiff(rgb1: Int, rgb2: Int): Int {
+        val r1 = (rgb1 shr 16) and 0xff
+        val g1 = (rgb1 shr 8) and 0xff
+        val b1 = (rgb1) and 0xff
+        val r2 = (rgb2 shr 16) and 0xff
+        val g2 = (rgb2 shr 8) and 0xff
+        val b2 = (rgb2) and 0xff
+        return (abs(r1 - r2) + abs(g1 - g2) + abs(b1 - b2))
     }
 
     /**
@@ -149,18 +149,20 @@ class CalcActivity:AppCompatActivity() {
      *
      * @return The score of the distance to the location.
      */
-    private fun matchPosition():Double{
+    private fun matchPosition(): Double {
         val userPos = args.getParcelable<LatLng>("userLocation")
         val markerPos = args.getParcelable<LatLng>("markerLocation")
 
         val results = FloatArray(3)
 
-        Location.distanceBetween(userPos!!.latitude,
+        Location.distanceBetween(
+            userPos!!.latitude,
             userPos.longitude, markerPos!!.latitude,
-            markerPos.longitude, results)
+            markerPos.longitude, results
+        )
 
         val distance = results[0].toDouble()
-        val score = 1000.0-distance
+        val score = 1000.0 - distance
         args_res.putDouble("distance", distance)
         args_res.putDouble("posScore", score)
 
@@ -175,7 +177,7 @@ class CalcActivity:AppCompatActivity() {
      * This is done to make the user return to the "detailsactivity" once
      * finished with the result activity.
      */
-    private fun launchResult(){
+    private fun launchResult() {
         val intent = Intent(this, ResultActivity::class.java)
         intent.putExtra("bundle", args_res)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -192,14 +194,16 @@ class CalcActivity:AppCompatActivity() {
         builder.setTitle("Confirm")
         builder.setMessage("Do you want to abort the calculation?")
 
-        builder.setPositiveButton("Yes", DialogInterface.OnClickListener {
-                dialogInterface: DialogInterface, i: Int ->
-            super.onBackPressed()
-        })
-        builder.setNegativeButton("No", DialogInterface.OnClickListener {
-                dialogInterface: DialogInterface, i: Int ->
-            dialogInterface.dismiss()
-        })
+        builder.setPositiveButton(
+            "Yes",
+            DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
+                super.onBackPressed()
+            })
+        builder.setNegativeButton(
+            "No",
+            DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
+                dialogInterface.dismiss()
+            })
 
         val alertDialog = builder.create()
         alertDialog.show()

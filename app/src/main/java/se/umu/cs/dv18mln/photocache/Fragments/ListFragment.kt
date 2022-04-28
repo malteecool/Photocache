@@ -23,17 +23,17 @@ import se.umu.cs.dv18mln.photocache.*
 /**
  * Custom list fragments to be displayed in the list view of the main activity.
  */
-class ListFragment(): Fragment() {
+class ListFragment() : Fragment() {
 
     lateinit var storage: FirebaseStorage
     lateinit var cacheData: ArrayList<CacheData>
     lateinit var userId: String
 
 
-    companion object{
-        fun newInstance(cacheDataString: ArrayList<String>, userId: String):Fragment{
+    companion object {
+        fun newInstance(cacheDataString: ArrayList<String>, userId: String): Fragment {
             val args = Bundle()
-            args.putStringArrayList("cacheData",cacheDataString)
+            args.putStringArrayList("cacheData", cacheDataString)
             args.putString("id", userId)
             val f = ListFragment()
             f.arguments = args
@@ -61,22 +61,22 @@ class ListFragment(): Fragment() {
      * Starts the "detailsactivity" when a fragment is pressed.
      * The intent is launched with the data stored in the cachedata-class.
      */
-    private fun startDetails(cacheData: CacheData, userId: String){
+    private fun startDetails(cacheData: CacheData, userId: String) {
         val intent = Intent(requireContext(), DetailsActivity::class.java)
         intent.putExtra("cacheData", cacheData)
         intent.putExtra("userId", userId)
         startActivity(intent)
     }
 
-    private fun getData(cacheData_id: ArrayList<String>, user: String){
+    private fun getData(cacheData_id: ArrayList<String>, user: String) {
         val databaseReference: DatabaseReference = Firebase.database.reference
         storage = Firebase.storage
 
         val cacheData = ArrayList<CacheData>()
         var i = 0
-        for (id in cacheData_id){
+        for (id in cacheData_id) {
             val query = databaseReference.child("cache").child(id)
-            query.addValueEventListener(object: ValueEventListener {
+            query.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                     // Assigning values from database.
@@ -97,41 +97,43 @@ class ListFragment(): Fragment() {
                     cacheData.add(cache)
 
                     val httpRef = storage.getReferenceFromUrl(
-                            "gs://photocache-fc3d8.appspot.com/CacheImages/${cache.imgId}")
+                        "gs://photocache-fc3d8.appspot.com/CacheImages/${cache.imgId}"
+                    )
 
                     val maxDownloadSizeBytes: Long = 8 * 1024 * 1024 // 1 MB
                     httpRef.getBytes(maxDownloadSizeBytes).addOnSuccessListener {
                         cache.imgArray = it
 
-                        if(i == cacheData_id.size-1) setData(cacheData, user)
+                        if (i == cacheData_id.size - 1) setData(cacheData, user)
 
                         i++
 
-                    }.addOnFailureListener{
+                    }.addOnFailureListener {
 
                         it.printStackTrace()
 
                     }
 
                 }
+
                 override fun onCancelled(dataBaseError: DatabaseError) {
-                    Toast.makeText(context,"Could not fetch database", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Could not fetch database", Toast.LENGTH_LONG).show()
                 }
             })
         }
     }
 
-    private fun setData(cacheData: ArrayList<CacheData>, userId: String){
+    private fun setData(cacheData: ArrayList<CacheData>, userId: String) {
 
         (activity as MainActivity?)!!.hideLoadingBar(true)
 
         val listView = requireView().findViewById<ListView>(R.id.listView)
         val listAdapter = CustomListView(
-            requireActivity(), cacheData.toTypedArray())
+            requireActivity(), cacheData.toTypedArray()
+        )
         listView.adapter = listAdapter
 
-        listView.setOnItemClickListener(){
-                _: AdapterView<*>?, _: View?, position: Int, _: Long ->
+        listView.setOnItemClickListener() { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             startDetails(cacheData[position], userId)
         }
     }
@@ -140,19 +142,18 @@ class ListFragment(): Fragment() {
      * Retrieves score of the user
      */
 
-    private fun getUserScore(user: String?, cache:CacheData){
+    private fun getUserScore(user: String?, cache: CacheData) {
 
         val databaseReference: DatabaseReference = Firebase.database.reference
-        if(user != null){
+        if (user != null) {
             val userQuery = databaseReference.child("users").child(user).child(cache.id!!)
-            userQuery.addValueEventListener(object: ValueEventListener{
-                override fun onDataChange(dataSnapshot: DataSnapshot){
+            userQuery.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
                     //Toast.makeText(context, "Value changed!", Toast.LENGTH_SHORT).show()
-                    if(!dataSnapshot.exists()){
+                    if (!dataSnapshot.exists()) {
                         //cache.id?.let { userQuery.child(it).setValue(0) }
                         cache.userScore = 0
-                    }
-                    else{
+                    } else {
                         val temp = cache.id.let { dataSnapshot.value }
                         cache.userScore = (temp as Long).toInt()
                     }
@@ -160,12 +161,12 @@ class ListFragment(): Fragment() {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(requireContext(),"Could not fetch database", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "Could not fetch database", Toast.LENGTH_LONG)
+                        .show()
                 }
             })
-        }
-        else{
-            Toast.makeText(requireContext(),"User is null.", Toast.LENGTH_LONG).show()
+        } else {
+            Toast.makeText(requireContext(), "User is null.", Toast.LENGTH_LONG).show()
         }
 
     }

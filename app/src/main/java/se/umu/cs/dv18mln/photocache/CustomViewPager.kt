@@ -9,7 +9,7 @@ import androidx.viewpager.widget.ViewPager
  * Class to represent a custom viewpager. The class is made to handle
  * when the viewpager should be "swipable" and not.
  */
-class CustomViewPager(context: Context, attrs: AttributeSet): ViewPager(context, attrs){
+class CustomViewPager(context: Context, attrs: AttributeSet) : ViewPager(context, attrs) {
     private var swipeEnabled = false
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

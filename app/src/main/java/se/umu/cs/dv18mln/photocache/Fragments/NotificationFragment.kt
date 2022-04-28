@@ -11,10 +11,10 @@ import se.umu.cs.dv18mln.photocache.R
  * The view holding notifications.
  * (Coming soon.)
  */
-class NotificationFragment:Fragment() {
+class NotificationFragment : Fragment() {
 
-    companion object{
-        fun newInstance():Fragment{
+    companion object {
+        fun newInstance(): Fragment {
             return NotificationFragment()
         }
     }

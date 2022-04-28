@@ -22,12 +22,12 @@ import se.umu.cs.dv18mln.photocache.R
  * Firebase API.
  *
  */
-class HighscoreFragment:Fragment(){
+class HighscoreFragment : Fragment() {
     private lateinit var databaseReference: DatabaseReference
     private var highscoreArray = arrayListOf<HighscoreData>()
 
-    companion object{
-        fun newInstance():Fragment{
+    companion object {
+        fun newInstance(): Fragment {
             return HighscoreFragment()
         }
     }
@@ -49,22 +49,24 @@ class HighscoreFragment:Fragment(){
 
     }
 
-    private fun setAdapter(view: View){
+    private fun setAdapter(view: View) {
         val listView = view.findViewById<ListView>(R.id.highscore_listview)
         highscoreArray.sortBy { it.score }
-        if(isAdded){
-            val highscoreAdapter = HighScoreListAdapter(requireActivity(),
-                    highscoreArray.reversed().toTypedArray())
+        if (isAdded) {
+            val highscoreAdapter = HighScoreListAdapter(
+                requireActivity(),
+                highscoreArray.reversed().toTypedArray()
+            )
             listView.adapter = highscoreAdapter
         }
     }
 
-    private fun onSuccess(view: View){
+    private fun onSuccess(view: View) {
         view.findViewById<ProgressBar>(R.id.progressBar).visibility = View.GONE
         view.findViewById<ListView>(R.id.highscore_listview).visibility = View.VISIBLE
     }
 
-    private fun onFailure(view: View){
+    private fun onFailure(view: View) {
         view.findViewById<ProgressBar>(R.id.progressBar).visibility = View.GONE
         view.findViewById<TextView>(R.id.lblCouldNotLoad).visibility = View.VISIBLE
     }
@@ -72,16 +74,21 @@ class HighscoreFragment:Fragment(){
     /**
      * Gets highscore from db.
      */
-    private fun handleData(view: View, querySize: Int){
+    private fun handleData(view: View, querySize: Int) {
         databaseReference = Firebase.database.reference
         val query = databaseReference.child("highscore")
-                .orderByValue()
-                .limitToLast(querySize)
+            .orderByValue()
+            .limitToLast(querySize)
 
         query.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
 
-                highscoreArray.add(HighscoreData(dataSnapshot.key as String, (dataSnapshot.value as Long).toInt()))
+                highscoreArray.add(
+                    HighscoreData(
+                        dataSnapshot.key as String,
+                        (dataSnapshot.value as Long).toInt()
+                    )
+                )
                 setAdapter(view)
                 onSuccess(view)
             }
@@ -92,8 +99,8 @@ class HighscoreFragment:Fragment(){
 
             override fun onChildRemoved(dataSnapshot: DataSnapshot) {
                 val user = dataSnapshot.key
-                for (data in highscoreArray){
-                    if(data.username == user){
+                for (data in highscoreArray) {
+                    if (data.username == user) {
                         highscoreArray.remove(data)
                         break
                     }
@@ -106,8 +113,10 @@ class HighscoreFragment:Fragment(){
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Toast.makeText(context, "Failed to load highscores.",
-                        Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context, "Failed to load highscores.",
+                    Toast.LENGTH_SHORT
+                ).show()
                 onFailure(view)
             }
         })

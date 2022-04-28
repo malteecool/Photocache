@@ -14,7 +14,7 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 
 
-class SignActivity: AppCompatActivity() {
+class SignActivity : AppCompatActivity() {
 
     private lateinit var signInButton: SignInButton
     private lateinit var frombot: Animation
@@ -26,11 +26,10 @@ class SignActivity: AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val account = GoogleSignIn.getLastSignedInAccount(this)
-        if(account != null){
+        if (account != null) {
             handleSignInResult(account)
             println("user signed in")
-        }
-        else{
+        } else {
             println("user not signed in.")
         }
     }
@@ -40,8 +39,8 @@ class SignActivity: AppCompatActivity() {
         setContentView(R.layout.sign_layout)
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build()
+            .requestEmail()
+            .build()
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
@@ -56,10 +55,9 @@ class SignActivity: AppCompatActivity() {
         signInButton.setOnClickListener { startSignin() }
 
 
-
     }
 
-    private fun startSignin(){
+    private fun startSignin() {
         val signInIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(signInIntent, 1)
 
@@ -68,17 +66,16 @@ class SignActivity: AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(resultCode == -1){
+        if (resultCode == -1) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             val account: GoogleSignInAccount? = task.getResult(ApiException::class.java)
             handleSignInResult(account)
-        }
-        else{
+        } else {
             println("error signing in, error code $resultCode")
         }
     }
 
-    private fun handleSignInResult(account: GoogleSignInAccount?){
+    private fun handleSignInResult(account: GoogleSignInAccount?) {
         println(account?.id)
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra("account", account)

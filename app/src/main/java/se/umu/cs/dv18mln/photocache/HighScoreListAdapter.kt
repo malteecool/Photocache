@@ -7,20 +7,19 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 
-class HighScoreListAdapter(context: Activity, val highscoreData: Array<HighscoreData>):
+class HighScoreListAdapter(context: Activity, val highscoreData: Array<HighscoreData>) :
     ArrayAdapter<HighscoreData>(context, R.layout.listview_highscore, highscoreData) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var rowView: View
         val viewHolder: ViewHolder
 
-        if(convertView == null){
+        if (convertView == null) {
             val inflater = LayoutInflater.from(context)
             rowView = inflater.inflate(R.layout.listview_highscore, convertView, true)
             viewHolder = ViewHolder(rowView)
             rowView.tag = viewHolder
-        }
-        else{
+        } else {
             rowView = convertView
             viewHolder = rowView.tag as ViewHolder
         }
@@ -30,7 +29,7 @@ class HighScoreListAdapter(context: Activity, val highscoreData: Array<Highscore
         return rowView
     }
 
-    private class ViewHolder(v: View){
+    private class ViewHolder(v: View) {
         val txtUsername = v.findViewById<TextView>(R.id.username)
         val txtHighscore = v.findViewById<TextView>(R.id.highscore)
 

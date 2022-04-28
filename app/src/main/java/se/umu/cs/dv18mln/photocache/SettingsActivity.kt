@@ -4,15 +4,15 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import se.umu.cs.dv18mln.photocache.Fragments.SettingsFragment
 
-class SettingsActivity: AppCompatActivity() {
+class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_layout)
         supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.settings_container, SettingsFragment())
-                .commit()
+            .beginTransaction()
+            .replace(R.id.settings_container, SettingsFragment())
+            .commit()
 
 
         setSupportActionBar(findViewById(R.id.settings_toolbar))

@@ -41,7 +41,7 @@ import java.util.*
  *
  * @author dv18mln
  */
-class DetailsActivity : AppCompatActivity(){
+class DetailsActivity : AppCompatActivity() {
     private val REQUEST_IMAGE_CAPTURE = 1
     private val REQUEST_TAKE_PHOTO = 1
     var NUMBER_FRAGMENTS = 3
@@ -58,11 +58,12 @@ class DetailsActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        NUMBER_FRAGMENTS = if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
-            2
-        } else{
-            3
-        }
+        NUMBER_FRAGMENTS =
+            if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                2
+            } else {
+                3
+            }
         setContentView(R.layout.details_layout)
 
         cacheData = intent.getParcelableExtra("cacheData") as CacheData
@@ -85,17 +86,17 @@ class DetailsActivity : AppCompatActivity(){
     /**
      * Sets the listener to the camera button.
      */
-    private fun setCameraListener(){
+    private fun setCameraListener() {
         cameraButton = findViewById(R.id.camera_button)
         cameraButton.setOnClickListener {
-            if(fragment.getUserLocation() != null){
+            if (fragment.getUserLocation() != null) {
                 args.putParcelable("userLocation", fragment.getUserLocation())
                 args.putParcelable("markerLocation", fragment.getMarkerLocation())
 
                 photoIntent()
-            }
-            else{
-                Toast.makeText(this, "Getting user location! Please wait...", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Getting user location! Please wait...", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
@@ -112,7 +113,7 @@ class DetailsActivity : AppCompatActivity(){
      * @param index The index of the page where the ViewPager should be
      * launched.
      */
-    private fun initNewPager(index:Int){
+    private fun initNewPager(index: Int) {
 
         setSupportActionBar(findViewById(R.id.details_toolbar))
         supportActionBar?.title = cacheData.title
@@ -142,12 +143,12 @@ class DetailsActivity : AppCompatActivity(){
      */
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        if(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             NUMBER_FRAGMENTS = 3
             setContentView(R.layout.details_layout)
             initNewPager(mPager.currentItem)
         }
-        if(newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             NUMBER_FRAGMENTS = 2
             setContentView(R.layout.details_layout)
             initNewPager(mPager.currentItem)
@@ -155,7 +156,7 @@ class DetailsActivity : AppCompatActivity(){
 
     }
 
-    override fun onOptionsItemSelected(item: MenuItem):Boolean{
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         onBackPressed()
         return super.onOptionsItemSelected(item)
     }
@@ -172,7 +173,7 @@ class DetailsActivity : AppCompatActivity(){
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         // Result of a successful imagecapture is -1, if the user cancels the result is 0.
-        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == -1){
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == -1) {
             val intent = Intent(this, CalcActivity::class.java)
             intent.putExtra("bundle", args)
             startActivity(intent)
@@ -222,10 +223,11 @@ class DetailsActivity : AppCompatActivity(){
      * Returns the respective fragment to be displayed in the ViewPager.
      * (Deprecated but could not get the new version to work with viewpager).
      */
-    private inner class ScreenSlidePagerAdapter(fm: FragmentManager, val cacheData: CacheData) : FragmentStatePagerAdapter(fm) {
+    private inner class ScreenSlidePagerAdapter(fm: FragmentManager, val cacheData: CacheData) :
+        FragmentStatePagerAdapter(fm) {
         override fun getCount(): Int = NUMBER_FRAGMENTS
 
-        override fun getItem(position: Int): Fragment{
+        override fun getItem(position: Int): Fragment {
             return when (position) {
                 0 -> {
                     SliderImgFragment.newInstance(cacheData)

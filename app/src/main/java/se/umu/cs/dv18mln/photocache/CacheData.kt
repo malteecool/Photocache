@@ -14,7 +14,7 @@ import kotlinx.android.parcel.Parcelize
  * @param y_pos Longitude coordinates of the cache.
  */
 
-class CacheData(val id:String?): Parcelable {
+class CacheData(val id: String?) : Parcelable {
     var title: String? = null
     var desc: String? = null
     var imgId: String? = null

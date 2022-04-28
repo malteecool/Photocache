@@ -13,7 +13,7 @@ import se.umu.cs.dv18mln.photocache.R
  * Fragment to hold the details of a cache. Displayed in the
  * DetailsActivity.
  */
-class SliderDetailsFragment:Fragment(){
+class SliderDetailsFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
